@@ -72,4 +72,26 @@ describe('MessageProcessor', () => {
       
     expect(result.errorMessage).to.equal('Invalid primary condition');
   });
+
+  it('should throw an error if there are multiple MSG segments', () => {
+    const message = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      EVT|TYPE|20230502112233
+      PRS|1|9876543210^^^Location^ID||Smith^John^A|||M|19800101|
+      DET|1|I|^^MainDepartment^101^Room 1|Common Cold
+    `;
+
+    expect(() => messageProcessor.parseMessage(message)).to.throw('Message must contain exactly one of each segment: MSG, EVT, PRS, DET');
+  });
+
+  it('should throw an error if there are missing segments', () => {
+    const message = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      PRS|1|9876543210^^^Location^ID||Smith^John^A|||M|19800101|
+    `;
+
+    expect(() => messageProcessor.parseMessage(message)).to.throw('Message must contain exactly one of each segment: MSG, EVT, PRS, DET');
+  });
+  
 });

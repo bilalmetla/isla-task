@@ -78,10 +78,10 @@ To deploy the application in a production environment using PM2:
 3. Manage the application with PM2 commands:
 
    - List running applications: `pm2 list`
-   - Stop the application: `pm2 stop my-node-app`
-   - Restart the application: `pm2 restart my-node-app`
-   - View logs: `pm2 logs my-node-app`
-   - Delete the application: `pm2 delete my-node-app`
+   - Stop the application: `pm2 stop patient-info-api`
+   - Restart the application: `pm2 restart patient-info-api`
+   - View logs: `pm2 logs patient-info-api`
+   - Delete the application: `pm2 delete patient-info-api`
 
 ## Configuration
 

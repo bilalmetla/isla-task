@@ -1,4 +1,10 @@
+const Joi = require('joi');
+
 const PatientInfo = require('../entities/PatientInfo');
+const parsePRS = require('../helpers/parsePRS');
+const parseDET = require('../helpers/parseDET');
+
+
 
 class MessageProcessor {
  
@@ -7,50 +13,49 @@ class MessageProcessor {
 
     // Split the message into segments
     const segments = message.split('\n').map(line => line.trim());
+    this.validateSegments(segments);
 
     segments.forEach(segment => {
       if (segment.startsWith('PRS')) {
-        this.parsePRS(segment, patientInfo);
+        parsePRS(segment, patientInfo);
       } else if (segment.startsWith('DET')) {
-        this.parseDET(segment, patientInfo);
+        parseDET(segment, patientInfo);
       }
     });
 
     return patientInfo;
   }
 
-  parsePRS(segment, patientInfo) {
-    // Extract the name from PRS to |M|
-    const namePart = segment.split('|M|')[0];
-    const nameComponents = namePart.split('|')[4].split('^');
-    patientInfo.fullName = {
-      lastName: nameComponents[0] || '',
-      firstName: nameComponents[1] || '',
-      middleName: nameComponents[2] || ''
+  validateSegments = (segments) => {
+    const segmentCounts = {
+      MSG: 0,
+      EVT: 0,
+      PRS: 0,
+      DET: 0
     };
 
-    // Extract the date of birth from |M| to DET
-    const dobPart = segment.split('|M|')[1];
-    const dob = dobPart.split('|')[0];
-    patientInfo.dateOfBirth = this.formatDate(dob);
-  }
+    segments.forEach(segment => {
+      const type = segment.split('|')[0];
+      if (segmentCounts.hasOwnProperty(type)) {
+        segmentCounts[type]++;
+      }
+    });
 
-  parseDET(segment, patientInfo) {
-    // Extract the primary condition from DET
-    const primaryCondition = segment.split('|')[4] || '';
-    patientInfo.primaryCondition = primaryCondition;
-  }
-  
-  formatDate(dateString) {
-    if (!dateString || dateString.length !== 8) {
-      throw new Error('Invalid date format');
+    const schema = Joi.object({
+      MSG: Joi.number().valid(1).required(),
+      EVT: Joi.number().valid(1).required(),
+      PRS: Joi.number().valid(1).required(),
+      DET: Joi.number().valid(1).required()
+    });
+
+    const { error } = schema.validate(segmentCounts);
+    if (error) {
+      throw new Error('Message must contain exactly one of each segment: MSG, EVT, PRS, DET');
     }
-    return `${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`;
   }
 
- 
 
-  validateData(data) {
+  validateParsedData(data) {
     if (!data.fullName.lastName || !data.fullName.firstName) {
       throw new Error('Invalid name data');
     }
@@ -65,7 +70,7 @@ class MessageProcessor {
   processMessage(message) {
     try {
       const extractedData = this.parseMessage(message);
-      this.validateData(extractedData);
+      this.validateParsedData(extractedData);
       return extractedData;
     } catch (error) {
       console.error('Error processing message:', error.message);

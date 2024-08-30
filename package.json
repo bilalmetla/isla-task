@@ -7,7 +7,7 @@
         "start:prod": "pm2 start ecosystem.config.js --env production",
         "start:stag-dev": "pm2 start ecosystem.config.js --env staging-dev",
         "start:github-actions": "node frameworks/express/server.js",
-        "start:dev": "nodemon frameworks/express/server.js",
+        "dev": "nodemon frameworks/express/server.js",
         "test": "npm run test:unit && npm run test:api",
         "test:unit": "mocha tests/unit/**/*.test.js --exit",
         "test:api": "mocha tests/api/**/*.test.js --exit"
@@ -25,7 +25,8 @@
         "axios": "^1.7.5",
         "body-parser": "^1.20.2",
         "dotenv": "^16.4.5",
-        "express": "^4.18.2"
+        "express": "^4.18.2",
+        "joi": "^17.13.3"
     },
     "devDependencies": {
         "chai": "^4.3.7",
