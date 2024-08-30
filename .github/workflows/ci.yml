@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Start the server
+      run: |
+        npm run start &  # Start the server in the background
+        sleep 10          # Wait a few seconds to ensure the server is running
+
+    - name: Run Unit Tests
+      run: npm run test:unit
+
+    - name: Run API Tests
+      run: npm run test:api
+
+    - name: Stop the server
+      run: |
+        kill $(lsof -t -i:3000)  # Replace 3000 with your server port if different
