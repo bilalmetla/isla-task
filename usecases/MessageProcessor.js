@@ -3,7 +3,8 @@ const parsePRS = require('../helpers/parsePRS');
 const parseDET = require('../helpers/parseDET');
 const { validateSegments } = require('../validators/messageValidator');
 const logger = require('../libs/logger');
-
+const { errorMessages } = require('../constants');
+const SegtmentTypes = {PRS:'PRS',DET: 'DET'}
 
 
 class MessageProcessor {
@@ -15,9 +16,9 @@ class MessageProcessor {
     this.validateSegments(segments);
 
     segments.forEach(segment => {
-      if (segment.startsWith('PRS')) {
+      if (segment.startsWith(SegtmentTypes.PRS)) {
         parsePRS(segment, patientInfo);
-      } else if (segment.startsWith('DET')) {
+      } else if (segment.startsWith(SegtmentTypes.DET)) {
         parseDET(segment, patientInfo);
       }
     });
@@ -46,13 +47,13 @@ class MessageProcessor {
 
   validateParsedData(data) {
     if (!data.fullName.lastName || !data.fullName.firstName) {
-      throw new Error('Invalid name data');
+      throw new Error(errorMessages.INVALID_NAME);
     }
     if (!data.dateOfBirth) {
-      throw new Error('Invalid date of birth');
+      throw new Error(errorMessages.INVALID_DATE_OF_BIRTH);
     }
     if (!data.primaryCondition) {
-      throw new Error('Invalid primary condition');
+      throw new Error(errorMessages.INVALID_PRIMARY_CONDITION);
     }
   }
 
