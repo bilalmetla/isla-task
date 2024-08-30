@@ -45,7 +45,7 @@ describe('MessageProcessor', () => {
     `;
       let result = messageProcessor.processMessage(message);
     
-    expect(result.message).to.equal('Invalid date format');
+    expect(result.errorMessage).to.equal('Invalid date format');
   });
     
   it('should throw an error for missing patient name', () => {
@@ -57,7 +57,7 @@ describe('MessageProcessor', () => {
     `;
       let result =  messageProcessor.processMessage(message)
      
-    expect(result.message).to.equal('Invalid name data');
+    expect(result.errorMessage).to.equal('Invalid name data');
   });
 
   it('should throw an error for missing primary condition', () => {
@@ -70,6 +70,6 @@ describe('MessageProcessor', () => {
 
       let result = messageProcessor.processMessage(message);
       
-    expect(result.message).to.equal('Invalid primary condition');
+    expect(result.errorMessage).to.equal('Invalid primary condition');
   });
 });

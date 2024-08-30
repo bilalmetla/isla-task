@@ -1,29 +1,51 @@
 const PatientInfo = require('../entities/PatientInfo');
 
 class MessageProcessor {
+ 
   parseMessage(message) {
-    const lines = message.trim().split('\n');
     const patientInfo = new PatientInfo();
 
-    lines.forEach(line => {
-      const segments = line.trim().split('|');
-      switch (segments[0]) {
-        case 'PRS':
-          const nameComponents = segments[4].split('^');
-          patientInfo.fullName.lastName = nameComponents[0] || '';
-          patientInfo.fullName.firstName = nameComponents[1] || '';
-          patientInfo.fullName.middleName = nameComponents[2] || '';
-          patientInfo.dateOfBirth = this.formatDate(segments[8]);
-          break;
-        case 'DET':
-          patientInfo.primaryCondition = segments[4] || '';
-          break;
-        default:
-          break;
+    // Split the message into segments
+    const segments = message.split('\n').map(line => line.trim());
+
+    segments.forEach(segment => {
+      if (segment.startsWith('PRS')) {
+        this.parsePRS(segment, patientInfo);
+      } else if (segment.startsWith('DET')) {
+        this.parseDET(segment, patientInfo);
       }
     });
 
     return patientInfo;
+  }
+
+  parsePRS(segment, patientInfo) {
+    // Extract the name from PRS to |M|
+    const namePart = segment.split('|M|')[0];
+    const nameComponents = namePart.split('|')[4].split('^');
+    patientInfo.fullName = {
+      lastName: nameComponents[0] || '',
+      firstName: nameComponents[1] || '',
+      middleName: nameComponents[2] || ''
+    };
+
+    // Extract the date of birth from |M| to DET
+    const dobPart = segment.split('|M|')[1];
+    const dob = dobPart.split('|')[0];
+    patientInfo.dateOfBirth = this.formatDate(dob);
+  }
+
+  parseDET(segment, patientInfo) {
+    // Extract the primary condition from DET
+    const primaryCondition = segment.split('|')[4] || '';
+    patientInfo.primaryCondition = primaryCondition;
+  }
+  
+  formatDate(dateString) {
+    if (!dateString || dateString.length !== 8) {
+      throw new Error('Invalid date format');
+    }
+    return `${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`;
   }
 
  
@@ -47,7 +69,7 @@ class MessageProcessor {
       return extractedData;
     } catch (error) {
       console.error('Error processing message:', error.message);
-      return error
+      return { errorMessage: error.message }
     }
   }
 }

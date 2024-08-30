@@ -1,0 +1,6 @@
+{
+    "watch": ["frameworks", "adapters", "usecases", "entities", "config"],
+    "ext": "js,json",
+    "ignore": ["tests/*", "node_modules/*"],
+    "exec": "node frameworks/express/server.js"
+  }
