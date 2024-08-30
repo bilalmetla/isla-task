@@ -4,8 +4,9 @@
     "description": "A Node.js API for processing patient information messages.",
     "main": "frameworks/express/server.js",
     "scripts": {
-        "start": "node frameworks/express/server.js",
-        "dev": "nodemon frameworks/express/server.js",
+        "start:prod": "pm2 start ecosystem.config.js --env production",
+        "start:stag-dev": "pm2 start ecosystem.config.js --env staging-dev",
+        "start:dev": "nodemon frameworks/express/server.js",
         "test": "npm run test:unit && npm run test:api",
         "test:unit": "mocha tests/unit/**/*.test.js --exit",
         "test:api": "mocha tests/api/**/*.test.js --exit"

@@ -2,12 +2,13 @@ const chai = require('chai');
 const axios = require('axios');
 const { expect } = chai;
 
-// const server = require('../../frameworks/express/server'); 
+// const server = require('../../frameworks/express/server');
+
+
 // Base URL for the server
-const baseURL = 'http://localhost:3000'; // Adjust the port if needed
+const baseURL = 'http://localhost:3000'; //todo: Adjust the port if needed
 
 describe('API Tests with Axios', () => {
-  // this.timeout(30000);
 
   it('should process a valid message and return patient info', async () => {
     const message = `
