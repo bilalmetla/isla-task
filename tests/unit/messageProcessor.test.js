@@ -94,4 +94,30 @@ describe('MessageProcessor', () => {
     expect(() => messageProcessor.parseMessage(message)).to.throw('Message must contain exactly one of each segment: MSG, EVT, PRS, DET');
   });
   
+
+  it('should process a message with additional segments without errors', () => {
+    const message = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      ADD|1|Some additional data
+      EVT|TYPE|20230502112233
+      PRS|1|9876543210^^^Location^ID||Smith^John^A|||M|19800101|
+      ADD|2|More additional data
+      DET|1|I|^^MainDepartment^101^Room 1|Common Cold
+      ADD|3|Even more additional data
+    `;
+
+    const result = messageProcessor.parseMessage(message);
+
+    expect(result).to.deep.equal({
+      fullName: {
+        lastName: 'Smith',
+        firstName: 'John',
+        middleName: 'A'
+      },
+      dateOfBirth: '1980-01-01',
+      primaryCondition: 'Common Cold'
+    });
+  });
+
+  
 });
