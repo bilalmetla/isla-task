@@ -1,18 +1,17 @@
-const Joi = require('joi');
-
 const PatientInfo = require('../entities/PatientInfo');
 const parsePRS = require('../helpers/parsePRS');
 const parseDET = require('../helpers/parseDET');
+const { validateSegments } = require('../validators/messageValidator');
+const logger = require('../libs/logger');
 
 
 
 class MessageProcessor {
- 
   parseMessage(message) {
-    const patientInfo = new PatientInfo();
+    logger.info('Parsing message');
 
-    // Split the message into segments
-    const segments = message.split('\n').map(line => line.trim());
+    const patientInfo = new PatientInfo();
+    const segments = message.split('\n').map(line => line.trim()); // Split the message into segments
     this.validateSegments(segments);
 
     segments.forEach(segment => {
@@ -23,10 +22,11 @@ class MessageProcessor {
       }
     });
 
+    logger.info('Message parsed successfully', patientInfo);
     return patientInfo;
   }
 
-  validateSegments = (segments) => {
+  validateSegments(segments) {
     const segmentCounts = {
       MSG: 0,
       EVT: 0,
@@ -41,19 +41,8 @@ class MessageProcessor {
       }
     });
 
-    const schema = Joi.object({
-      MSG: Joi.number().valid(1).required(),
-      EVT: Joi.number().valid(1).required(),
-      PRS: Joi.number().valid(1).required(),
-      DET: Joi.number().valid(1).required()
-    });
-
-    const { error } = schema.validate(segmentCounts);
-    if (error) {
-      throw new Error('Message must contain exactly one of each segment: MSG, EVT, PRS, DET');
-    }
+    validateSegments(segmentCounts);
   }
-
 
   validateParsedData(data) {
     if (!data.fullName.lastName || !data.fullName.firstName) {
@@ -73,7 +62,7 @@ class MessageProcessor {
       this.validateParsedData(extractedData);
       return extractedData;
     } catch (error) {
-      console.error('Error processing message:', error.message);
+      logger.error('Error processing message:', error.message);
       return { errorMessage: error.message }
     }
   }
