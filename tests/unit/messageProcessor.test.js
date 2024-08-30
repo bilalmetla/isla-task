@@ -119,5 +119,59 @@ describe('MessageProcessor', () => {
     });
   });
 
+
+  it('should handle missing fields by setting them to empty', () => {
+    const message = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      EVT|TYPE|20230502112233
+      PRS|1|9876543210^^^Location^ID||Smith^John|||M|19800101|
+      DET|1|I|^^MainDepartment^101^Room 1|
+    `;
+
+    const result = messageProcessor.parseMessage(message);
+
+    expect(result).to.deep.equal({
+      fullName: {
+        lastName: 'Smith',
+        firstName: 'John',
+        middleName: '' // Middle name is missing and should be an empty string
+      },
+      dateOfBirth: '1980-01-01',
+      primaryCondition: '' // Primary condition is missing and should be an empty string
+    });
+  });
+
+  it('should handle segments and fields with and without trailing pipes', () => {
+    const messageWithTrailingPipes = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233|
+      EVT|TYPE|20230502112233|
+      PRS|1|9876543210^^^Location^ID||Smith^John^A|||M|19800101|
+      DET|1|I|^^MainDepartment^101^Room 1|Common Cold|
+    `;
+
+    const messageWithoutTrailingPipes = `
+      MSG|^~\\&|SenderSystem|Location|ReceiverSystem|Location|20230502112233
+      EVT|TYPE|20230502112233
+      PRS|1|9876543210^^^Location^ID||Smith^John^A|||M|19800101
+      DET|1|I|^^MainDepartment^101^Room 1|Common Cold
+    `;
+
+    const expectedOutput = {
+      fullName: {
+        lastName: 'Smith',
+        firstName: 'John',
+        middleName: 'A'
+      },
+      dateOfBirth: '1980-01-01',
+      primaryCondition: 'Common Cold'
+    };
+
+    const resultWithTrailingPipes = messageProcessor.parseMessage(messageWithTrailingPipes);
+    const resultWithoutTrailingPipes = messageProcessor.parseMessage(messageWithoutTrailingPipes);
+
+    expect(resultWithTrailingPipes).to.deep.equal(expectedOutput);
+    expect(resultWithoutTrailingPipes).to.deep.equal(expectedOutput);
+  });
+
   
 });
