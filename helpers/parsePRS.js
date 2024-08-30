@@ -1,6 +1,5 @@
 
 
-const { moreDelay } = require('../../proxyserver/conf/config');
 const formatDate = require('./formatDate')
 
 module.exports = (segment, patientInfo) => {
