@@ -26,7 +26,7 @@ jobs:
 
     - name: Start the server
       run: |
-        npm run start &  # Start the server in the background
+        npm run start:github-actions &  # Start the server in the background
         sleep 10          # Wait a few seconds to ensure the server is running
 
     - name: Run Unit Tests
