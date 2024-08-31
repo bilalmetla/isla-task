@@ -7,7 +7,7 @@ This is a Node.js application designed to process structured plain-text messages
 
 - Parses and extracts patient information from structured messages.
 - Provides an API endpoint to process messages and retrieve patient data.
-- Includes unit and API tests using Mocha, Chai, and Axios.
+- Includes unit and API tests using Mocha, Chai, and Axios. [Basic task was completed in 2-3 hours, rest I added more features and improved further]
 - Supports automatic restarts during development with `nodemon`.
 - Configured for production deployment using PM2.
 - Configured Docker support to run with docker containers
