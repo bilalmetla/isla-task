@@ -10,6 +10,8 @@ This is a Node.js application designed to process structured plain-text messages
 - Includes unit and API tests using Mocha, Chai, and Axios.
 - Supports automatic restarts during development with `nodemon`.
 - Configured for production deployment using PM2.
+- Configured Docker support to run with docker containers
+- Configured GitHub actions to continously testing of unit and api and docker setup testing.
 
 ## Prerequisites
 
@@ -103,6 +105,12 @@ To deploy the application using Docker:
 ### Environment Variables
 
 The application uses environment variables for configuration. You can set these variables in a `.env` file for development or directly on the server for production.
+   
+   ```bash 
+   PORT=3000
+   NODE_ENV=development
+   LOG_FILE='./logs.txt'
+   ```
 
 ### PM2 Configuration
 
