@@ -13,7 +13,7 @@
         "test:unit": "mocha tests/unit/**/*.test.js --exit",
         "test:api": "mocha tests/api/**/*.test.js --exit",
         "docker:build":"docker build -t patient-info-api .",
-        "docker:run":"docker run -p 3000:3000 patient-info-api"
+        "docker:run":"docker run -d -p 3000:3000 --name patient-info-con patient-info-api"
     },
     "keywords": [
         "nodejs",

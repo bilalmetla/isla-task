@@ -1,0 +1,44 @@
+name: Docker Test and API Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Build Docker image
+      run: npm run docker:build
+
+    - name: Run Docker container
+      run: |
+        npm run docker:run
+        sleep 20
+      
+
+    # - name: Wait for the service to be up
+      # run: |
+      #   until curl -s http://localhost:3000/health; do
+      #     echo "Waiting for the service to be up..."
+      #     sleep 5
+      #   done
+
+    - name: Run API tests
+      run: npm run test:api
+
+    - name: Stop and remove Docker container
+      run: docker stop patient-info-con && docker rm patient-info-con
