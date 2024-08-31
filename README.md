@@ -74,6 +74,21 @@ To deploy the application in a production environment using PM2:
    ```bash
    pm2 start ecosystem.config.js --env production
    ```
+   OR
+   ```bash
+   npm run start:prod
+   ```
+
+## Docker
+
+To deploy the application using Docker:
+
+1. Ensure docker is installed:
+
+   ```bash
+   npm run docker:build
+   npm run docker:run
+   ```
 
 3. Manage the application with PM2 commands:
 
