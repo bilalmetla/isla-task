@@ -23,8 +23,8 @@ This is a Node.js application designed to process structured plain-text messages
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   cd your-repo
+   git clone https://github.com/bilalmetla/isla-task.git
+   cd isla-task
    ```
 
 2. Install dependencies:
@@ -92,13 +92,6 @@ To deploy the application using Docker:
    npm run docker:run
    ```
 
-3. Manage the application with PM2 commands:
-
-   - List running applications: `pm2 list`
-   - Stop the application: `pm2 stop patient-info-api`
-   - Restart the application: `pm2 restart patient-info-api`
-   - View logs: `pm2 logs patient-info-api`
-   - Delete the application: `pm2 delete patient-info-api`
 
 ## Configuration
 
